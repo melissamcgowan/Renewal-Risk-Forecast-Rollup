@@ -1,0 +1,261 @@
+account_id,csm,segment,arr,health_score,health_band,days_to_renewal,expansion_signal,downgrade_signal,exec_sponsor_engaged
+ACCT-0000,Melissa McGowan,Enterprise,141500.0,51.1,Neutral,56,0,0,1
+ACCT-0001,Melissa McGowan,SMB,5900.0,60.0,Neutral,173,0,1,1
+ACCT-0002,Jordan Reyes,SMB,6900.0,1.0,Critical,321,0,1,0
+ACCT-0003,Priya Nair,Mid-Market,60900.0,48.6,At Risk,149,0,0,0
+ACCT-0004,Jordan Reyes,Enterprise,126100.0,18.1,Critical,192,0,0,0
+ACCT-0005,Jordan Reyes,SMB,14900.0,99.0,Healthy,362,1,0,0
+ACCT-0006,Melissa McGowan,SMB,22700.0,61.9,Neutral,231,0,0,1
+ACCT-0007,Jordan Reyes,Mid-Market,62700.0,86.8,Healthy,275,0,0,1
+ACCT-0008,Tom Alvarez,Mid-Market,17400.0,38.2,At Risk,237,0,0,0
+ACCT-0009,Tom Alvarez,SMB,7300.0,26.9,Critical,202,0,1,0
+ACCT-0010,Priya Nair,Mid-Market,25500.0,65.9,Neutral,287,0,0,1
+ACCT-0011,Melissa McGowan,Mid-Market,28600.0,21.0,Critical,90,0,0,0
+ACCT-0012,Tom Alvarez,Mid-Market,15900.0,57.9,Neutral,230,0,0,1
+ACCT-0013,Tom Alvarez,SMB,4300.0,40.7,At Risk,90,0,0,1
+ACCT-0014,Melissa McGowan,SMB,8300.0,31.8,At Risk,290,1,0,0
+ACCT-0015,Priya Nair,Enterprise,103800.0,68.4,Neutral,25,0,1,1
+ACCT-0016,Melissa McGowan,Enterprise,181200.0,3.4,Critical,36,0,0,0
+ACCT-0017,Melissa McGowan,SMB,10200.0,47.2,At Risk,278,0,0,0
+ACCT-0018,Jordan Reyes,SMB,24400.0,84.2,Healthy,189,0,0,1
+ACCT-0019,Melissa McGowan,Mid-Market,18100.0,59.8,Neutral,315,0,0,1
+ACCT-0020,Priya Nair,Mid-Market,22400.0,58.4,Neutral,337,0,0,0
+ACCT-0021,Tom Alvarez,Enterprise,158600.0,92.1,Healthy,189,0,0,1
+ACCT-0022,Jordan Reyes,SMB,10500.0,61.0,Neutral,40,0,0,1
+ACCT-0023,Jordan Reyes,SMB,7300.0,38.6,At Risk,276,0,0,0
+ACCT-0024,Melissa McGowan,SMB,17600.0,35.9,At Risk,104,0,1,1
+ACCT-0025,Melissa McGowan,SMB,20700.0,27.8,Critical,74,0,0,1
+ACCT-0026,Priya Nair,Mid-Market,86600.0,61.2,Neutral,199,0,0,0
+ACCT-0027,Priya Nair,Enterprise,114600.0,91.6,Healthy,139,1,0,1
+ACCT-0028,Melissa McGowan,SMB,11900.0,7.8,Critical,154,0,0,0
+ACCT-0029,Jordan Reyes,SMB,13400.0,68.9,Neutral,98,0,1,1
+ACCT-0030,Jordan Reyes,Mid-Market,46300.0,36.9,At Risk,4,1,0,1
+ACCT-0031,Tom Alvarez,Mid-Market,74900.0,62.3,Neutral,150,0,0,1
+ACCT-0032,Priya Nair,SMB,9400.0,47.9,At Risk,189,0,0,0
+ACCT-0033,Priya Nair,SMB,14400.0,81.0,Healthy,220,1,0,1
+ACCT-0034,Priya Nair,SMB,4000.0,29.9,Critical,193,0,0,1
+ACCT-0035,Tom Alvarez,Mid-Market,65600.0,69.4,Neutral,349,1,0,1
+ACCT-0036,Tom Alvarez,SMB,27200.0,89.6,Healthy,235,0,0,1
+ACCT-0037,Jordan Reyes,SMB,11800.0,35.7,At Risk,356,1,1,0
+ACCT-0038,Melissa McGowan,Mid-Market,75500.0,26.2,Critical,323,0,0,1
+ACCT-0039,Priya Nair,SMB,5200.0,81.7,Healthy,205,1,0,1
+ACCT-0040,Melissa McGowan,Mid-Market,38100.0,83.9,Healthy,192,0,0,0
+ACCT-0041,Jordan Reyes,SMB,5500.0,48.4,At Risk,328,0,0,1
+ACCT-0042,Melissa McGowan,SMB,14100.0,39.4,At Risk,35,0,0,1
+ACCT-0043,Jordan Reyes,Mid-Market,58400.0,6.2,Critical,85,0,0,1
+ACCT-0044,Melissa McGowan,Mid-Market,22700.0,46.4,At Risk,296,0,0,0
+ACCT-0045,Melissa McGowan,Mid-Market,29400.0,21.9,Critical,114,0,0,0
+ACCT-0046,Priya Nair,SMB,8900.0,68.5,Neutral,148,0,0,1
+ACCT-0047,Tom Alvarez,Mid-Market,151000.0,22.2,Critical,11,0,0,0
+ACCT-0048,Priya Nair,SMB,11600.0,25.1,Critical,333,0,0,1
+ACCT-0049,Priya Nair,SMB,12700.0,42.9,At Risk,270,0,0,1
+ACCT-0050,Priya Nair,Enterprise,167500.0,66.1,Neutral,54,1,0,0
+ACCT-0051,Jordan Reyes,Enterprise,162400.0,9.9,Critical,335,0,0,0
+ACCT-0052,Melissa McGowan,SMB,10600.0,60.0,Neutral,364,1,0,1
+ACCT-0053,Jordan Reyes,SMB,6200.0,55.4,Neutral,120,1,0,0
+ACCT-0054,Priya Nair,Mid-Market,32000.0,63.2,Neutral,157,0,0,1
+ACCT-0055,Melissa McGowan,Mid-Market,101800.0,15.4,Critical,180,0,0,0
+ACCT-0056,Melissa McGowan,Mid-Market,51100.0,76.0,Healthy,136,0,0,1
+ACCT-0057,Priya Nair,Mid-Market,37300.0,80.2,Healthy,239,0,0,1
+ACCT-0058,Melissa McGowan,SMB,6100.0,90.9,Healthy,301,0,0,1
+ACCT-0059,Priya Nair,Mid-Market,43700.0,15.8,Critical,138,0,0,0
+ACCT-0060,Priya Nair,Mid-Market,45700.0,6.0,Critical,42,0,0,0
+ACCT-0061,Tom Alvarez,SMB,8700.0,55.0,Neutral,214,0,0,0
+ACCT-0062,Jordan Reyes,Mid-Market,70200.0,39.8,At Risk,314,0,0,1
+ACCT-0063,Jordan Reyes,Enterprise,104200.0,72.4,Neutral,109,0,1,0
+ACCT-0064,Tom Alvarez,Mid-Market,41300.0,81.8,Healthy,255,0,0,1
+ACCT-0065,Priya Nair,Mid-Market,68500.0,53.0,Neutral,308,0,0,1
+ACCT-0066,Priya Nair,Mid-Market,50300.0,68.5,Neutral,149,1,0,0
+ACCT-0067,Tom Alvarez,Enterprise,245300.0,30.1,At Risk,309,0,0,0
+ACCT-0068,Priya Nair,SMB,10700.0,51.0,Neutral,13,0,0,0
+ACCT-0069,Tom Alvarez,SMB,9700.0,65.1,Neutral,182,0,0,1
+ACCT-0070,Jordan Reyes,Mid-Market,56800.0,70.2,Neutral,309,0,0,0
+ACCT-0071,Priya Nair,Enterprise,155800.0,99.0,Healthy,208,1,0,1
+ACCT-0072,Tom Alvarez,SMB,21700.0,35.6,At Risk,23,0,0,1
+ACCT-0073,Jordan Reyes,SMB,14700.0,46.2,At Risk,111,1,0,0
+ACCT-0074,Priya Nair,SMB,11800.0,62.4,Neutral,34,0,0,1
+ACCT-0075,Jordan Reyes,SMB,15000.0,82.7,Healthy,246,0,0,0
+ACCT-0076,Jordan Reyes,SMB,16600.0,29.6,Critical,43,1,0,0
+ACCT-0077,Melissa McGowan,Mid-Market,25700.0,21.2,Critical,189,0,0,0
+ACCT-0078,Melissa McGowan,Enterprise,130300.0,54.8,Neutral,260,1,0,0
+ACCT-0079,Priya Nair,SMB,10200.0,50.8,Neutral,160,1,1,0
+ACCT-0080,Jordan Reyes,Enterprise,255100.0,36.1,At Risk,17,0,0,0
+ACCT-0081,Priya Nair,SMB,9400.0,1.0,Critical,95,0,1,1
+ACCT-0082,Priya Nair,Mid-Market,76600.0,52.1,Neutral,248,0,1,1
+ACCT-0083,Jordan Reyes,Enterprise,74400.0,67.2,Neutral,285,0,0,1
+ACCT-0084,Jordan Reyes,Mid-Market,43800.0,59.5,Neutral,88,0,0,1
+ACCT-0085,Melissa McGowan,Mid-Market,76700.0,11.8,Critical,10,0,0,0
+ACCT-0086,Priya Nair,Mid-Market,39500.0,34.9,At Risk,268,1,0,1
+ACCT-0087,Tom Alvarez,Mid-Market,80100.0,73.9,Neutral,93,0,0,1
+ACCT-0088,Priya Nair,Mid-Market,16300.0,76.5,Healthy,313,1,0,0
+ACCT-0089,Tom Alvarez,SMB,12200.0,16.2,Critical,56,0,0,0
+ACCT-0090,Priya Nair,SMB,13000.0,98.8,Healthy,112,1,0,0
+ACCT-0091,Priya Nair,Mid-Market,42300.0,5.4,Critical,229,0,0,0
+ACCT-0092,Melissa McGowan,Mid-Market,21200.0,49.9,At Risk,92,0,1,0
+ACCT-0093,Priya Nair,Mid-Market,62800.0,88.0,Healthy,188,0,0,1
+ACCT-0094,Jordan Reyes,SMB,3700.0,56.3,Neutral,138,0,0,1
+ACCT-0095,Jordan Reyes,Enterprise,225000.0,87.4,Healthy,72,0,0,1
+ACCT-0096,Jordan Reyes,SMB,13900.0,88.2,Healthy,189,0,0,0
+ACCT-0097,Priya Nair,Enterprise,229300.0,74.8,Neutral,108,0,0,0
+ACCT-0098,Priya Nair,SMB,10600.0,63.5,Neutral,26,0,0,1
+ACCT-0099,Priya Nair,SMB,6900.0,42.0,At Risk,62,1,0,0
+ACCT-0100,Jordan Reyes,Enterprise,108200.0,48.8,At Risk,96,0,0,1
+ACCT-0101,Melissa McGowan,Enterprise,111000.0,51.6,Neutral,248,0,1,1
+ACCT-0102,Tom Alvarez,Mid-Market,60700.0,37.9,At Risk,284,0,0,0
+ACCT-0103,Jordan Reyes,Enterprise,119800.0,35.4,At Risk,347,0,0,0
+ACCT-0104,Jordan Reyes,SMB,14800.0,61.3,Neutral,225,0,0,1
+ACCT-0105,Melissa McGowan,Enterprise,178400.0,76.0,Healthy,85,1,0,1
+ACCT-0106,Jordan Reyes,Mid-Market,91600.0,41.8,At Risk,252,0,1,0
+ACCT-0107,Melissa McGowan,SMB,4400.0,31.6,At Risk,147,0,0,0
+ACCT-0108,Jordan Reyes,Mid-Market,36800.0,30.6,At Risk,329,0,0,0
+ACCT-0109,Priya Nair,SMB,17000.0,31.2,At Risk,125,0,0,1
+ACCT-0110,Tom Alvarez,Mid-Market,63700.0,54.7,Neutral,47,0,0,1
+ACCT-0111,Priya Nair,Mid-Market,34100.0,64.3,Neutral,90,0,0,1
+ACCT-0112,Melissa McGowan,SMB,10600.0,49.0,At Risk,2,1,0,1
+ACCT-0113,Priya Nair,SMB,11500.0,48.5,At Risk,338,0,0,0
+ACCT-0114,Priya Nair,SMB,12900.0,59.0,Neutral,62,0,0,1
+ACCT-0115,Tom Alvarez,Mid-Market,34200.0,50.6,Neutral,43,0,0,0
+ACCT-0116,Jordan Reyes,SMB,8800.0,25.6,Critical,278,0,0,1
+ACCT-0117,Tom Alvarez,SMB,6900.0,54.1,Neutral,25,0,0,1
+ACCT-0118,Jordan Reyes,Mid-Market,37500.0,31.2,At Risk,23,0,0,1
+ACCT-0119,Melissa McGowan,SMB,24200.0,13.1,Critical,259,0,0,0
+ACCT-0120,Jordan Reyes,Mid-Market,28200.0,99.0,Healthy,191,0,0,0
+ACCT-0121,Tom Alvarez,Mid-Market,73400.0,46.3,At Risk,32,0,0,1
+ACCT-0122,Priya Nair,SMB,31900.0,61.1,Neutral,166,0,1,1
+ACCT-0123,Jordan Reyes,Mid-Market,50300.0,52.5,Neutral,281,0,0,1
+ACCT-0124,Jordan Reyes,SMB,39400.0,37.6,At Risk,229,0,0,0
+ACCT-0125,Priya Nair,Enterprise,132100.0,67.4,Neutral,187,1,0,0
+ACCT-0126,Jordan Reyes,SMB,28000.0,66.9,Neutral,30,0,0,1
+ACCT-0127,Priya Nair,Mid-Market,44600.0,62.5,Neutral,293,0,0,1
+ACCT-0128,Tom Alvarez,Enterprise,77500.0,84.3,Healthy,345,0,1,1
+ACCT-0129,Tom Alvarez,SMB,14500.0,30.9,At Risk,133,0,0,1
+ACCT-0130,Tom Alvarez,Mid-Market,117400.0,68.3,Neutral,300,0,0,1
+ACCT-0131,Melissa McGowan,Enterprise,106100.0,76.2,Healthy,198,1,0,1
+ACCT-0132,Priya Nair,Enterprise,181100.0,7.8,Critical,297,0,0,0
+ACCT-0133,Jordan Reyes,SMB,7400.0,34.0,At Risk,328,0,0,0
+ACCT-0134,Tom Alvarez,Mid-Market,29500.0,62.6,Neutral,44,0,0,1
+ACCT-0135,Jordan Reyes,Enterprise,179200.0,59.7,Neutral,279,0,0,1
+ACCT-0136,Tom Alvarez,Mid-Market,41900.0,24.9,Critical,11,0,0,0
+ACCT-0137,Melissa McGowan,Enterprise,189500.0,33.1,At Risk,26,0,0,1
+ACCT-0138,Jordan Reyes,Mid-Market,86800.0,62.6,Neutral,80,1,0,1
+ACCT-0139,Tom Alvarez,SMB,6800.0,88.5,Healthy,43,0,0,0
+ACCT-0140,Priya Nair,SMB,8700.0,40.1,At Risk,332,0,0,0
+ACCT-0141,Tom Alvarez,Enterprise,146400.0,69.8,Neutral,273,0,0,1
+ACCT-0142,Jordan Reyes,Mid-Market,146600.0,55.5,Neutral,212,0,0,0
+ACCT-0143,Melissa McGowan,SMB,10500.0,86.5,Healthy,255,1,0,0
+ACCT-0144,Priya Nair,SMB,9700.0,60.6,Neutral,319,0,0,0
+ACCT-0145,Jordan Reyes,SMB,15300.0,38.1,At Risk,206,0,0,0
+ACCT-0146,Jordan Reyes,Mid-Market,132600.0,64.0,Neutral,67,0,1,1
+ACCT-0147,Melissa McGowan,SMB,9200.0,43.7,At Risk,282,0,0,1
+ACCT-0148,Melissa McGowan,Enterprise,123700.0,2.6,Critical,186,0,0,0
+ACCT-0149,Tom Alvarez,SMB,12600.0,63.0,Neutral,317,0,0,0
+ACCT-0150,Tom Alvarez,Enterprise,210800.0,2.6,Critical,64,0,1,1
+ACCT-0151,Tom Alvarez,SMB,36900.0,30.3,At Risk,141,0,0,0
+ACCT-0152,Jordan Reyes,Enterprise,77600.0,40.2,At Risk,151,0,0,1
+ACCT-0153,Melissa McGowan,Mid-Market,20300.0,19.3,Critical,124,0,0,0
+ACCT-0154,Priya Nair,Mid-Market,50400.0,82.3,Healthy,161,0,1,0
+ACCT-0155,Priya Nair,Mid-Market,61000.0,81.7,Healthy,22,1,0,1
+ACCT-0156,Priya Nair,SMB,4100.0,38.6,At Risk,341,0,0,1
+ACCT-0157,Melissa McGowan,Enterprise,107100.0,10.3,Critical,127,0,0,0
+ACCT-0158,Melissa McGowan,Mid-Market,75600.0,43.7,At Risk,284,1,1,0
+ACCT-0159,Priya Nair,SMB,9600.0,81.1,Healthy,272,0,0,1
+ACCT-0160,Melissa McGowan,Mid-Market,59700.0,75.8,Healthy,147,0,0,1
+ACCT-0161,Tom Alvarez,SMB,13700.0,87.2,Healthy,185,0,0,0
+ACCT-0162,Tom Alvarez,SMB,17300.0,52.6,Neutral,106,0,0,1
+ACCT-0163,Melissa McGowan,Mid-Market,58400.0,25.4,Critical,147,0,0,1
+ACCT-0164,Melissa McGowan,Mid-Market,53600.0,67.3,Neutral,228,0,0,1
+ACCT-0165,Tom Alvarez,SMB,23400.0,63.0,Neutral,139,0,0,1
+ACCT-0166,Priya Nair,SMB,9500.0,20.7,Critical,149,1,0,0
+ACCT-0167,Jordan Reyes,Mid-Market,50200.0,64.2,Neutral,39,1,0,1
+ACCT-0168,Jordan Reyes,Mid-Market,83000.0,47.3,At Risk,174,0,1,0
+ACCT-0169,Tom Alvarez,Enterprise,111000.0,89.5,Healthy,89,0,1,1
+ACCT-0170,Jordan Reyes,Mid-Market,39300.0,47.2,At Risk,39,0,0,1
+ACCT-0171,Melissa McGowan,Enterprise,101000.0,33.1,At Risk,189,0,0,0
+ACCT-0172,Priya Nair,SMB,7900.0,27.9,Critical,270,0,0,0
+ACCT-0173,Jordan Reyes,SMB,34700.0,3.8,Critical,122,0,0,0
+ACCT-0174,Priya Nair,SMB,16000.0,65.2,Neutral,251,1,1,1
+ACCT-0175,Tom Alvarez,SMB,32300.0,54.9,Neutral,353,1,0,0
+ACCT-0176,Jordan Reyes,SMB,18200.0,40.0,At Risk,349,0,0,0
+ACCT-0177,Melissa McGowan,Mid-Market,49300.0,66.6,Neutral,62,0,0,0
+ACCT-0178,Melissa McGowan,Enterprise,128200.0,84.5,Healthy,356,0,0,1
+ACCT-0179,Tom Alvarez,SMB,14400.0,23.2,Critical,84,0,0,1
+ACCT-0180,Melissa McGowan,Mid-Market,46400.0,31.5,At Risk,23,0,0,1
+ACCT-0181,Tom Alvarez,Mid-Market,74800.0,63.9,Neutral,299,0,0,1
+ACCT-0182,Priya Nair,Mid-Market,30700.0,17.6,Critical,9,0,1,0
+ACCT-0183,Tom Alvarez,Enterprise,160600.0,55.6,Neutral,149,0,0,0
+ACCT-0184,Tom Alvarez,Mid-Market,59800.0,51.6,Neutral,171,0,0,0
+ACCT-0185,Melissa McGowan,SMB,11300.0,66.0,Neutral,19,0,0,1
+ACCT-0186,Melissa McGowan,Mid-Market,42200.0,33.4,At Risk,56,0,0,1
+ACCT-0187,Tom Alvarez,SMB,16700.0,40.1,At Risk,324,0,0,1
+ACCT-0188,Melissa McGowan,SMB,16700.0,62.9,Neutral,300,0,0,0
+ACCT-0189,Priya Nair,Mid-Market,45100.0,14.3,Critical,328,0,1,1
+ACCT-0190,Melissa McGowan,SMB,12600.0,32.6,At Risk,275,0,0,1
+ACCT-0191,Melissa McGowan,SMB,9600.0,36.7,At Risk,111,0,0,0
+ACCT-0192,Priya Nair,SMB,16700.0,43.5,At Risk,351,1,0,0
+ACCT-0193,Melissa McGowan,Mid-Market,44600.0,40.2,At Risk,27,1,1,0
+ACCT-0194,Priya Nair,Mid-Market,21600.0,55.0,Neutral,227,0,0,1
+ACCT-0195,Tom Alvarez,SMB,10800.0,11.7,Critical,23,0,0,0
+ACCT-0196,Jordan Reyes,Mid-Market,64200.0,33.1,At Risk,62,0,0,0
+ACCT-0197,Melissa McGowan,SMB,14500.0,58.8,Neutral,162,0,0,0
+ACCT-0198,Melissa McGowan,Enterprise,94200.0,3.5,Critical,124,0,0,1
+ACCT-0199,Jordan Reyes,Mid-Market,68000.0,83.3,Healthy,280,1,0,1
+ACCT-0200,Melissa McGowan,SMB,17000.0,36.2,At Risk,76,0,0,0
+ACCT-0201,Priya Nair,Mid-Market,63700.0,52.1,Neutral,93,1,1,0
+ACCT-0202,Priya Nair,Enterprise,312700.0,31.7,At Risk,95,0,0,0
+ACCT-0203,Priya Nair,Mid-Market,39700.0,68.3,Neutral,301,0,0,1
+ACCT-0204,Priya Nair,Mid-Market,63300.0,64.6,Neutral,21,1,0,0
+ACCT-0205,Priya Nair,Mid-Market,41100.0,74.4,Neutral,167,1,0,0
+ACCT-0206,Tom Alvarez,Enterprise,237900.0,25.1,Critical,272,0,0,1
+ACCT-0207,Jordan Reyes,Enterprise,259100.0,82.2,Healthy,359,0,0,1
+ACCT-0208,Tom Alvarez,SMB,15900.0,40.7,At Risk,52,0,0,0
+ACCT-0209,Jordan Reyes,SMB,18000.0,62.3,Neutral,266,0,0,0
+ACCT-0210,Melissa McGowan,SMB,8300.0,74.7,Neutral,183,0,0,1
+ACCT-0211,Melissa McGowan,SMB,16900.0,41.1,At Risk,71,0,0,1
+ACCT-0212,Priya Nair,SMB,6800.0,41.8,At Risk,134,1,0,0
+ACCT-0213,Melissa McGowan,Mid-Market,136500.0,52.1,Neutral,31,0,0,0
+ACCT-0214,Priya Nair,Enterprise,256200.0,59.2,Neutral,80,0,0,1
+ACCT-0215,Tom Alvarez,SMB,5700.0,61.3,Neutral,204,0,0,1
+ACCT-0216,Jordan Reyes,SMB,3300.0,33.3,At Risk,359,0,0,0
+ACCT-0217,Melissa McGowan,Enterprise,274100.0,54.3,Neutral,135,1,0,1
+ACCT-0218,Priya Nair,SMB,8000.0,49.0,At Risk,287,0,0,1
+ACCT-0219,Jordan Reyes,SMB,16000.0,20.0,Critical,103,0,0,1
+ACCT-0220,Tom Alvarez,Mid-Market,23900.0,42.2,At Risk,217,0,0,1
+ACCT-0221,Melissa McGowan,Mid-Market,47400.0,55.8,Neutral,108,0,0,0
+ACCT-0222,Melissa McGowan,Enterprise,102900.0,74.8,Neutral,144,1,0,1
+ACCT-0223,Jordan Reyes,SMB,16400.0,32.5,At Risk,195,1,0,0
+ACCT-0224,Jordan Reyes,Enterprise,120000.0,97.6,Healthy,262,0,0,1
+ACCT-0225,Melissa McGowan,SMB,25500.0,35.0,At Risk,63,0,0,0
+ACCT-0226,Jordan Reyes,SMB,8300.0,61.8,Neutral,279,0,0,1
+ACCT-0227,Priya Nair,SMB,23000.0,20.7,Critical,110,0,1,1
+ACCT-0228,Jordan Reyes,SMB,12000.0,43.2,At Risk,96,0,0,1
+ACCT-0229,Melissa McGowan,Enterprise,183300.0,81.7,Healthy,300,0,0,1
+ACCT-0230,Jordan Reyes,SMB,5500.0,33.9,At Risk,59,0,0,0
+ACCT-0231,Jordan Reyes,SMB,5000.0,51.6,Neutral,131,0,0,1
+ACCT-0232,Jordan Reyes,Enterprise,238500.0,35.0,At Risk,57,1,0,0
+ACCT-0233,Melissa McGowan,Enterprise,76300.0,25.8,Critical,8,0,0,0
+ACCT-0234,Melissa McGowan,SMB,10200.0,68.7,Neutral,44,0,0,1
+ACCT-0235,Tom Alvarez,SMB,10300.0,52.7,Neutral,324,1,0,1
+ACCT-0236,Tom Alvarez,Mid-Market,28800.0,80.4,Healthy,7,1,0,0
+ACCT-0237,Tom Alvarez,Mid-Market,50100.0,78.0,Healthy,192,0,0,1
+ACCT-0238,Priya Nair,SMB,6000.0,91.8,Healthy,21,0,0,1
+ACCT-0239,Jordan Reyes,Mid-Market,25000.0,61.8,Neutral,270,0,0,1
+ACCT-0240,Tom Alvarez,SMB,19100.0,51.8,Neutral,260,0,0,0
+ACCT-0241,Jordan Reyes,Mid-Market,30200.0,78.2,Healthy,240,0,0,1
+ACCT-0242,Priya Nair,SMB,17500.0,26.3,Critical,209,0,0,0
+ACCT-0243,Priya Nair,SMB,16800.0,44.3,At Risk,156,0,0,0
+ACCT-0244,Jordan Reyes,Mid-Market,96300.0,41.3,At Risk,320,1,0,1
+ACCT-0245,Melissa McGowan,Enterprise,176200.0,55.1,Neutral,147,1,1,0
+ACCT-0246,Jordan Reyes,SMB,4800.0,55.0,Neutral,228,1,0,1
+ACCT-0247,Priya Nair,SMB,8700.0,36.3,At Risk,31,0,0,0
+ACCT-0248,Melissa McGowan,SMB,9800.0,13.1,Critical,184,0,0,0
+ACCT-0249,Jordan Reyes,Enterprise,259200.0,75.7,Healthy,173,0,0,1
+ACCT-0250,Jordan Reyes,SMB,14300.0,67.6,Neutral,284,1,0,1
+ACCT-0251,Jordan Reyes,SMB,9400.0,74.6,Neutral,276,1,0,1
+ACCT-0252,Tom Alvarez,SMB,14900.0,38.5,At Risk,250,0,0,1
+ACCT-0253,Jordan Reyes,Enterprise,117200.0,10.8,Critical,293,0,0,0
+ACCT-0254,Melissa McGowan,SMB,15800.0,31.8,At Risk,124,1,0,1
+ACCT-0255,Priya Nair,Mid-Market,48600.0,71.2,Neutral,170,1,0,1
+ACCT-0256,Jordan Reyes,Mid-Market,78300.0,29.6,Critical,56,0,0,0
+ACCT-0257,Priya Nair,Mid-Market,53200.0,49.2,At Risk,48,0,0,1
+ACCT-0258,Jordan Reyes,SMB,19700.0,96.1,Healthy,189,1,0,1
+ACCT-0259,Jordan Reyes,Enterprise,139300.0,44.3,At Risk,29,1,0,1
