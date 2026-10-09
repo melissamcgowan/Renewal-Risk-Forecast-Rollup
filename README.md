@@ -13,6 +13,8 @@ signals from the customer-health-score-model project and rolls them up
 across a full book of business, weighted by churn risk, broken out by
 renewal window, CSM, segment, and individual flagged accounts.
 
+Try it live: https://melissamcgowan.github.io/Renewal-Risk-Forecast-Rollup/
+
 ## What it does
 
 1. **`01_generate_portfolio_data.py`** -- Generates a synthetic book of
@@ -66,7 +68,7 @@ python3 04_build_webapp.py             # generates index.html (open it in a brow
 
 - Replace `RISK_WEIGHTS` with actual churn-rate-by-health-band numbers
   from your own historical data -- exactly what the churn model in the
-  [customer-health-score-model](../customer-health-score-model) project
+  customer-health-score-model project
   produces. These two projects are designed to plug into each other:
   swap the static weights for that model's live predicted probabilities.
 - Run this on a schedule (weekly/monthly) and track how the at-risk
