@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renewal Risk &amp; Forecast Rollup</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#1d2433; --mute:#5b6678; --line:#e1e5ec;
+  --accent:#2E5A9C; --total:#8FA6C2; --crit:#D64545; --risk:#E8A33D; --neu:#8FA6C2; --ok:#3E8E5A;
+  --shadow:0 1px 2px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#11151c; --card:#1a202a; --ink:#e8ecf2; --mute:#9aa6b8; --line:#2a3342;
+         --accent:#7aa5e6; --total:#5d7391; --shadow:none; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 56px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+h1{margin:0;font-size:24px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:4px 0 0;max-width:62ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.controls{display:grid;grid-template-columns:1.1fr 1.4fr;gap:16px;margin-bottom:16px}
+.controls h2,.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:600}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+.checks{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:13px}
+.checks label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.sl{font-size:13px}
+.sl .row{display:flex;justify-content:space-between;margin-bottom:2px}
+.sl b{font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.hint{font-size:12px;color:var(--mute);margin:10px 0 0}
+button{font:inherit;font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.kpi .v{font-size:26px;font-weight:650;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.kpi .s{font-size:12px;color:var(--mute)}
+.kpi.hot .v{color:var(--crit)}
+.insight{margin:0 0 16px;padding:10px 14px;border-left:3px solid var(--risk);background:var(--card);border-radius:0 8px 8px 0;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mute);margin-bottom:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font-size:12px}
+svg .val{fill:var(--ink);font-weight:600}
+svg .gl{stroke:var(--line)}
+svg .axis{stroke:var(--line)}
+.clickable{cursor:pointer}
+.clickable:hover{filter:brightness(1.08)}
+.tablecard{overflow:hidden}
+.tbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);cursor:pointer;user-select:none;font-weight:600}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+th .ar{opacity:.7}
+.chip{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}
+.chip.Critical{background:var(--crit)}.chip.At\ Risk{background:#c98414}.chip.Neutral{background:#6f88a8}.chip.Healthy{background:var(--ok)}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-right:4px;color:var(--mute)}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+footer{color:var(--mute);font-size:12px;margin-top:20px}
+@media (max-width:860px){
+  .controls,.grid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Renewal Risk &amp; Forecast Rollup</h1>
+      <p class="sub">How much of the ARR coming up for renewal is actually at risk, and where. Synthetic book of business. Change the filters or the churn assumptions and everything recalculates.</p>
+    </div>
+    <button id="reset" type="button">Reset to defaults</button>
+  </header>
+
+  <section class="controls">
+    <div class="card">
+      <h2>Filters</h2>
+      <div class="filters">
+        <label class="f">Renewal window<select id="f-window"></select></label>
+        <label class="f">CSM<select id="f-csm"></select></label>
+        <label class="f">Segment<select id="f-segment"></select></label>
+        <label class="f">Health band<select id="f-band"></select></label>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" id="c-uplift"> Add 15% risk uplift when an account has a downgrade signal and no engaged exec sponsor</label>
+        <label><input type="checkbox" id="c-flag"> Account list: only At Risk and Critical</label>
+      </div>
+      <p class="hint">Tip: click any bar in the charts to filter by it. Click it again to clear.</p>
+    </div>
+    <div class="card">
+      <h2>Assumed churn probability by health band</h2>
+      <div class="sliders" id="sliders"></div>
+      <p class="hint">Defaults are the heuristic from the Python rollup. Swap in your own historical churn-by-band rates to see how the forecast moves.</p>
+    </div>
+  </section>
+
+  <section class="kpis" id="kpis"></section>
+  <p class="insight" id="insight"></p>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Total ARR vs. risk-weighted ARR by window</h2>
+      <div class="legend"><span><i style="background:var(--total)"></i>Total ARR</span><span><i style="background:var(--crit)"></i>ARR at risk</span></div>
+      <div id="ch-window"></div>
+    </div>
+    <div class="card">
+      <h2>ARR at risk by CSM</h2>
+      <div id="ch-csm"></div>
+    </div>
+    <div class="card">
+      <h2>Renewing accounts by health band</h2>
+      <div id="ch-band"></div>
+    </div>
+    <div class="card">
+      <h2>ARR at risk by segment</h2>
+      <div id="ch-seg"></div>
+    </div>
+  </section>
+
+  <section class="card tablecard">
+    <div class="tbar">
+      <h2 style="margin:0" id="tbl-title">Accounts to flag</h2>
+      <button id="toggle-all" type="button"></button>
+    </div>
+    <div class="tscroll" id="tbl"></div>
+  </section>
+
+  <footer>Synthetic data generated by 01_generate_portfolio_data.py. Risk model and defaults mirror 02_renewal_risk_rollup.py. This page is rebuilt by 04_build_webapp.py.</footer>
+</div>
+
+<script>
+const D = {"rows":[{"id":"ACCT-0000","csm":"Melissa McGowan","segment":"Enterprise","arr":141500,"score":51.1,"band":"Neutral","days":56,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0001","csm":"Melissa McGowan","segment":"SMB","arr":5900,"score":60.0,"band":"Neutral","days":173,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0002","csm":"Jordan Reyes","segment":"SMB","arr":6900,"score":1.0,"band":"Critical","days":321,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0003","csm":"Priya Nair","segment":"Mid-Market","arr":60900,"score":48.6,"band":"At Risk","days":149,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0004","csm":"Jordan Reyes","segment":"Enterprise","arr":126100,"score":18.1,"band":"Critical","days":192,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0005","csm":"Jordan Reyes","segment":"SMB","arr":14900,"score":99.0,"band":"Healthy","days":362,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0006","csm":"Melissa McGowan","segment":"SMB","arr":22700,"score":61.9,"band":"Neutral","days":231,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0007","csm":"Jordan Reyes","segment":"Mid-Market","arr":62700,"score":86.8,"band":"Healthy","days":275,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0008","csm":"Tom Alvarez","segment":"Mid-Market","arr":17400,"score":38.2,"band":"At Risk","days":237,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0009","csm":"Tom Alvarez","segment":"SMB","arr":7300,"score":26.9,"band":"Critical","days":202,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0010","csm":"Priya Nair","segment":"Mid-Market","arr":25500,"score":65.9,"band":"Neutral","days":287,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0011","csm":"Melissa McGowan","segment":"Mid-Market","arr":28600,"score":21.0,"band":"Critical","days":90,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0012","csm":"Tom Alvarez","segment":"Mid-Market","arr":15900,"score":57.9,"band":"Neutral","days":230,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0013","csm":"Tom Alvarez","segment":"SMB","arr":4300,"score":40.7,"band":"At Risk","days":90,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0014","csm":"Melissa McGowan","segment":"SMB","arr":8300,"score":31.8,"band":"At Risk","days":290,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0015","csm":"Priya Nair","segment":"Enterprise","arr":103800,"score":68.4,"band":"Neutral","days":25,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0016","csm":"Melissa McGowan","segment":"Enterprise","arr":181200,"score":3.4,"band":"Critical","days":36,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0017","csm":"Melissa McGowan","segment":"SMB","arr":10200,"score":47.2,"band":"At Risk","days":278,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0018","csm":"Jordan Reyes","segment":"SMB","arr":24400,"score":84.2,"band":"Healthy","days":189,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0019","csm":"Melissa McGowan","segment":"Mid-Market","arr":18100,"score":59.8,"band":"Neutral","days":315,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0020","csm":"Priya Nair","segment":"Mid-Market","arr":22400,"score":58.4,"band":"Neutral","days":337,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0021","csm":"Tom Alvarez","segment":"Enterprise","arr":158600,"score":92.1,"band":"Healthy","days":189,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0022","csm":"Jordan Reyes","segment":"SMB","arr":10500,"score":61.0,"band":"Neutral","days":40,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0023","csm":"Jordan Reyes","segment":"SMB","arr":7300,"score":38.6,"band":"At Risk","days":276,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0024","csm":"Melissa McGowan","segment":"SMB","arr":17600,"score":35.9,"band":"At Risk","days":104,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0025","csm":"Melissa McGowan","segment":"SMB","arr":20700,"score":27.8,"band":"Critical","days":74,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0026","csm":"Priya Nair","segment":"Mid-Market","arr":86600,"score":61.2,"band":"Neutral","days":199,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0027","csm":"Priya Nair","segment":"Enterprise","arr":114600,"score":91.6,"band":"Healthy","days":139,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0028","csm":"Melissa McGowan","segment":"SMB","arr":11900,"score":7.8,"band":"Critical","days":154,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0029","csm":"Jordan Reyes","segment":"SMB","arr":13400,"score":68.9,"band":"Neutral","days":98,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0030","csm":"Jordan Reyes","segment":"Mid-Market","arr":46300,"score":36.9,"band":"At Risk","days":4,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0031","csm":"Tom Alvarez","segment":"Mid-Market","arr":74900,"score":62.3,"band":"Neutral","days":150,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0032","csm":"Priya Nair","segment":"SMB","arr":9400,"score":47.9,"band":"At Risk","days":189,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0033","csm":"Priya Nair","segment":"SMB","arr":14400,"score":81.0,"band":"Healthy","days":220,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0034","csm":"Priya Nair","segment":"SMB","arr":4000,"score":29.9,"band":"Critical","days":193,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0035","csm":"Tom Alvarez","segment":"Mid-Market","arr":65600,"score":69.4,"band":"Neutral","days":349,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0036","csm":"Tom Alvarez","segment":"SMB","arr":27200,"score":89.6,"band":"Healthy","days":235,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0037","csm":"Jordan Reyes","segment":"SMB","arr":11800,"score":35.7,"band":"At Risk","days":356,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0038","csm":"Melissa McGowan","segment":"Mid-Market","arr":75500,"score":26.2,"band":"Critical","days":323,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0039","csm":"Priya Nair","segment":"SMB","arr":5200,"score":81.7,"band":"Healthy","days":205,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0040","csm":"Melissa McGowan","segment":"Mid-Market","arr":38100,"score":83.9,"band":"Healthy","days":192,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0041","csm":"Jordan Reyes","segment":"SMB","arr":5500,"score":48.4,"band":"At Risk","days":328,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0042","csm":"Melissa McGowan","segment":"SMB","arr":14100,"score":39.4,"band":"At Risk","days":35,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0043","csm":"Jordan Reyes","segment":"Mid-Market","arr":58400,"score":6.2,"band":"Critical","days":85,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0044","csm":"Melissa McGowan","segment":"Mid-Market","arr":22700,"score":46.4,"band":"At Risk","days":296,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0045","csm":"Melissa McGowan","segment":"Mid-Market","arr":29400,"score":21.9,"band":"Critical","days":114,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0046","csm":"Priya Nair","segment":"SMB","arr":8900,"score":68.5,"band":"Neutral","days":148,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0047","csm":"Tom Alvarez","segment":"Mid-Market","arr":151000,"score":22.2,"band":"Critical","days":11,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0048","csm":"Priya Nair","segment":"SMB","arr":11600,"score":25.1,"band":"Critical","days":333,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0049","csm":"Priya Nair","segment":"SMB","arr":12700,"score":42.9,"band":"At Risk","days":270,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0050","csm":"Priya Nair","segment":"Enterprise","arr":167500,"score":66.1,"band":"Neutral","days":54,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0051","csm":"Jordan Reyes","segment":"Enterprise","arr":162400,"score":9.9,"band":"Critical","days":335,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0052","csm":"Melissa McGowan","segment":"SMB","arr":10600,"score":60.0,"band":"Neutral","days":364,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0053","csm":"Jordan Reyes","segment":"SMB","arr":6200,"score":55.4,"band":"Neutral","days":120,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0054","csm":"Priya Nair","segment":"Mid-Market","arr":32000,"score":63.2,"band":"Neutral","days":157,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0055","csm":"Melissa McGowan","segment":"Mid-Market","arr":101800,"score":15.4,"band":"Critical","days":180,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0056","csm":"Melissa McGowan","segment":"Mid-Market","arr":51100,"score":76.0,"band":"Healthy","days":136,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0057","csm":"Priya Nair","segment":"Mid-Market","arr":37300,"score":80.2,"band":"Healthy","days":239,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0058","csm":"Melissa McGowan","segment":"SMB","arr":6100,"score":90.9,"band":"Healthy","days":301,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0059","csm":"Priya Nair","segment":"Mid-Market","arr":43700,"score":15.8,"band":"Critical","days":138,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0060","csm":"Priya Nair","segment":"Mid-Market","arr":45700,"score":6.0,"band":"Critical","days":42,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0061","csm":"Tom Alvarez","segment":"SMB","arr":8700,"score":55.0,"band":"Neutral","days":214,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0062","csm":"Jordan Reyes","segment":"Mid-Market","arr":70200,"score":39.8,"band":"At Risk","days":314,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0063","csm":"Jordan Reyes","segment":"Enterprise","arr":104200,"score":72.4,"band":"Neutral","days":109,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0064","csm":"Tom Alvarez","segment":"Mid-Market","arr":41300,"score":81.8,"band":"Healthy","days":255,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0065","csm":"Priya Nair","segment":"Mid-Market","arr":68500,"score":53.0,"band":"Neutral","days":308,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0066","csm":"Priya Nair","segment":"Mid-Market","arr":50300,"score":68.5,"band":"Neutral","days":149,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0067","csm":"Tom Alvarez","segment":"Enterprise","arr":245300,"score":30.1,"band":"At Risk","days":309,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0068","csm":"Priya Nair","segment":"SMB","arr":10700,"score":51.0,"band":"Neutral","days":13,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0069","csm":"Tom Alvarez","segment":"SMB","arr":9700,"score":65.1,"band":"Neutral","days":182,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0070","csm":"Jordan Reyes","segment":"Mid-Market","arr":56800,"score":70.2,"band":"Neutral","days":309,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0071","csm":"Priya Nair","segment":"Enterprise","arr":155800,"score":99.0,"band":"Healthy","days":208,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0072","csm":"Tom Alvarez","segment":"SMB","arr":21700,"score":35.6,"band":"At Risk","days":23,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0073","csm":"Jordan Reyes","segment":"SMB","arr":14700,"score":46.2,"band":"At Risk","days":111,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0074","csm":"Priya Nair","segment":"SMB","arr":11800,"score":62.4,"band":"Neutral","days":34,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0075","csm":"Jordan Reyes","segment":"SMB","arr":15000,"score":82.7,"band":"Healthy","days":246,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0076","csm":"Jordan Reyes","segment":"SMB","arr":16600,"score":29.6,"band":"Critical","days":43,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0077","csm":"Melissa McGowan","segment":"Mid-Market","arr":25700,"score":21.2,"band":"Critical","days":189,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0078","csm":"Melissa McGowan","segment":"Enterprise","arr":130300,"score":54.8,"band":"Neutral","days":260,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0079","csm":"Priya Nair","segment":"SMB","arr":10200,"score":50.8,"band":"Neutral","days":160,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0080","csm":"Jordan Reyes","segment":"Enterprise","arr":255100,"score":36.1,"band":"At Risk","days":17,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0081","csm":"Priya Nair","segment":"SMB","arr":9400,"score":1.0,"band":"Critical","days":95,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0082","csm":"Priya Nair","segment":"Mid-Market","arr":76600,"score":52.1,"band":"Neutral","days":248,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0083","csm":"Jordan Reyes","segment":"Enterprise","arr":74400,"score":67.2,"band":"Neutral","days":285,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0084","csm":"Jordan Reyes","segment":"Mid-Market","arr":43800,"score":59.5,"band":"Neutral","days":88,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0085","csm":"Melissa McGowan","segment":"Mid-Market","arr":76700,"score":11.8,"band":"Critical","days":10,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0086","csm":"Priya Nair","segment":"Mid-Market","arr":39500,"score":34.9,"band":"At Risk","days":268,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0087","csm":"Tom Alvarez","segment":"Mid-Market","arr":80100,"score":73.9,"band":"Neutral","days":93,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0088","csm":"Priya Nair","segment":"Mid-Market","arr":16300,"score":76.5,"band":"Healthy","days":313,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0089","csm":"Tom Alvarez","segment":"SMB","arr":12200,"score":16.2,"band":"Critical","days":56,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0090","csm":"Priya Nair","segment":"SMB","arr":13000,"score":98.8,"band":"Healthy","days":112,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0091","csm":"Priya Nair","segment":"Mid-Market","arr":42300,"score":5.4,"band":"Critical","days":229,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0092","csm":"Melissa McGowan","segment":"Mid-Market","arr":21200,"score":49.9,"band":"At Risk","days":92,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0093","csm":"Priya Nair","segment":"Mid-Market","arr":62800,"score":88.0,"band":"Healthy","days":188,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0094","csm":"Jordan Reyes","segment":"SMB","arr":3700,"score":56.3,"band":"Neutral","days":138,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0095","csm":"Jordan Reyes","segment":"Enterprise","arr":225000,"score":87.4,"band":"Healthy","days":72,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0096","csm":"Jordan Reyes","segment":"SMB","arr":13900,"score":88.2,"band":"Healthy","days":189,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0097","csm":"Priya Nair","segment":"Enterprise","arr":229300,"score":74.8,"band":"Neutral","days":108,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0098","csm":"Priya Nair","segment":"SMB","arr":10600,"score":63.5,"band":"Neutral","days":26,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0099","csm":"Priya Nair","segment":"SMB","arr":6900,"score":42.0,"band":"At Risk","days":62,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0100","csm":"Jordan Reyes","segment":"Enterprise","arr":108200,"score":48.8,"band":"At Risk","days":96,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0101","csm":"Melissa McGowan","segment":"Enterprise","arr":111000,"score":51.6,"band":"Neutral","days":248,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0102","csm":"Tom Alvarez","segment":"Mid-Market","arr":60700,"score":37.9,"band":"At Risk","days":284,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0103","csm":"Jordan Reyes","segment":"Enterprise","arr":119800,"score":35.4,"band":"At Risk","days":347,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0104","csm":"Jordan Reyes","segment":"SMB","arr":14800,"score":61.3,"band":"Neutral","days":225,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0105","csm":"Melissa McGowan","segment":"Enterprise","arr":178400,"score":76.0,"band":"Healthy","days":85,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0106","csm":"Jordan Reyes","segment":"Mid-Market","arr":91600,"score":41.8,"band":"At Risk","days":252,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0107","csm":"Melissa McGowan","segment":"SMB","arr":4400,"score":31.6,"band":"At Risk","days":147,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0108","csm":"Jordan Reyes","segment":"Mid-Market","arr":36800,"score":30.6,"band":"At Risk","days":329,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0109","csm":"Priya Nair","segment":"SMB","arr":17000,"score":31.2,"band":"At Risk","days":125,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0110","csm":"Tom Alvarez","segment":"Mid-Market","arr":63700,"score":54.7,"band":"Neutral","days":47,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0111","csm":"Priya Nair","segment":"Mid-Market","arr":34100,"score":64.3,"band":"Neutral","days":90,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0112","csm":"Melissa McGowan","segment":"SMB","arr":10600,"score":49.0,"band":"At Risk","days":2,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0113","csm":"Priya Nair","segment":"SMB","arr":11500,"score":48.5,"band":"At Risk","days":338,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0114","csm":"Priya Nair","segment":"SMB","arr":12900,"score":59.0,"band":"Neutral","days":62,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0115","csm":"Tom Alvarez","segment":"Mid-Market","arr":34200,"score":50.6,"band":"Neutral","days":43,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0116","csm":"Jordan Reyes","segment":"SMB","arr":8800,"score":25.6,"band":"Critical","days":278,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0117","csm":"Tom Alvarez","segment":"SMB","arr":6900,"score":54.1,"band":"Neutral","days":25,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0118","csm":"Jordan Reyes","segment":"Mid-Market","arr":37500,"score":31.2,"band":"At Risk","days":23,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0119","csm":"Melissa McGowan","segment":"SMB","arr":24200,"score":13.1,"band":"Critical","days":259,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0120","csm":"Jordan Reyes","segment":"Mid-Market","arr":28200,"score":99.0,"band":"Healthy","days":191,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0121","csm":"Tom Alvarez","segment":"Mid-Market","arr":73400,"score":46.3,"band":"At Risk","days":32,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0122","csm":"Priya Nair","segment":"SMB","arr":31900,"score":61.1,"band":"Neutral","days":166,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0123","csm":"Jordan Reyes","segment":"Mid-Market","arr":50300,"score":52.5,"band":"Neutral","days":281,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0124","csm":"Jordan Reyes","segment":"SMB","arr":39400,"score":37.6,"band":"At Risk","days":229,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0125","csm":"Priya Nair","segment":"Enterprise","arr":132100,"score":67.4,"band":"Neutral","days":187,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0126","csm":"Jordan Reyes","segment":"SMB","arr":28000,"score":66.9,"band":"Neutral","days":30,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0127","csm":"Priya Nair","segment":"Mid-Market","arr":44600,"score":62.5,"band":"Neutral","days":293,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0128","csm":"Tom Alvarez","segment":"Enterprise","arr":77500,"score":84.3,"band":"Healthy","days":345,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0129","csm":"Tom Alvarez","segment":"SMB","arr":14500,"score":30.9,"band":"At Risk","days":133,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0130","csm":"Tom Alvarez","segment":"Mid-Market","arr":117400,"score":68.3,"band":"Neutral","days":300,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0131","csm":"Melissa McGowan","segment":"Enterprise","arr":106100,"score":76.2,"band":"Healthy","days":198,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0132","csm":"Priya Nair","segment":"Enterprise","arr":181100,"score":7.8,"band":"Critical","days":297,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0133","csm":"Jordan Reyes","segment":"SMB","arr":7400,"score":34.0,"band":"At Risk","days":328,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0134","csm":"Tom Alvarez","segment":"Mid-Market","arr":29500,"score":62.6,"band":"Neutral","days":44,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0135","csm":"Jordan Reyes","segment":"Enterprise","arr":179200,"score":59.7,"band":"Neutral","days":279,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0136","csm":"Tom Alvarez","segment":"Mid-Market","arr":41900,"score":24.9,"band":"Critical","days":11,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0137","csm":"Melissa McGowan","segment":"Enterprise","arr":189500,"score":33.1,"band":"At Risk","days":26,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0138","csm":"Jordan Reyes","segment":"Mid-Market","arr":86800,"score":62.6,"band":"Neutral","days":80,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0139","csm":"Tom Alvarez","segment":"SMB","arr":6800,"score":88.5,"band":"Healthy","days":43,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0140","csm":"Priya Nair","segment":"SMB","arr":8700,"score":40.1,"band":"At Risk","days":332,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0141","csm":"Tom Alvarez","segment":"Enterprise","arr":146400,"score":69.8,"band":"Neutral","days":273,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0142","csm":"Jordan Reyes","segment":"Mid-Market","arr":146600,"score":55.5,"band":"Neutral","days":212,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0143","csm":"Melissa McGowan","segment":"SMB","arr":10500,"score":86.5,"band":"Healthy","days":255,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0144","csm":"Priya Nair","segment":"SMB","arr":9700,"score":60.6,"band":"Neutral","days":319,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0145","csm":"Jordan Reyes","segment":"SMB","arr":15300,"score":38.1,"band":"At Risk","days":206,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0146","csm":"Jordan Reyes","segment":"Mid-Market","arr":132600,"score":64.0,"band":"Neutral","days":67,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0147","csm":"Melissa McGowan","segment":"SMB","arr":9200,"score":43.7,"band":"At Risk","days":282,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0148","csm":"Melissa McGowan","segment":"Enterprise","arr":123700,"score":2.6,"band":"Critical","days":186,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0149","csm":"Tom Alvarez","segment":"SMB","arr":12600,"score":63.0,"band":"Neutral","days":317,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0150","csm":"Tom Alvarez","segment":"Enterprise","arr":210800,"score":2.6,"band":"Critical","days":64,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0151","csm":"Tom Alvarez","segment":"SMB","arr":36900,"score":30.3,"band":"At Risk","days":141,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0152","csm":"Jordan Reyes","segment":"Enterprise","arr":77600,"score":40.2,"band":"At Risk","days":151,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0153","csm":"Melissa McGowan","segment":"Mid-Market","arr":20300,"score":19.3,"band":"Critical","days":124,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0154","csm":"Priya Nair","segment":"Mid-Market","arr":50400,"score":82.3,"band":"Healthy","days":161,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0155","csm":"Priya Nair","segment":"Mid-Market","arr":61000,"score":81.7,"band":"Healthy","days":22,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0156","csm":"Priya Nair","segment":"SMB","arr":4100,"score":38.6,"band":"At Risk","days":341,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0157","csm":"Melissa McGowan","segment":"Enterprise","arr":107100,"score":10.3,"band":"Critical","days":127,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0158","csm":"Melissa McGowan","segment":"Mid-Market","arr":75600,"score":43.7,"band":"At Risk","days":284,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0159","csm":"Priya Nair","segment":"SMB","arr":9600,"score":81.1,"band":"Healthy","days":272,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0160","csm":"Melissa McGowan","segment":"Mid-Market","arr":59700,"score":75.8,"band":"Healthy","days":147,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0161","csm":"Tom Alvarez","segment":"SMB","arr":13700,"score":87.2,"band":"Healthy","days":185,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0162","csm":"Tom Alvarez","segment":"SMB","arr":17300,"score":52.6,"band":"Neutral","days":106,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0163","csm":"Melissa McGowan","segment":"Mid-Market","arr":58400,"score":25.4,"band":"Critical","days":147,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0164","csm":"Melissa McGowan","segment":"Mid-Market","arr":53600,"score":67.3,"band":"Neutral","days":228,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0165","csm":"Tom Alvarez","segment":"SMB","arr":23400,"score":63.0,"band":"Neutral","days":139,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0166","csm":"Priya Nair","segment":"SMB","arr":9500,"score":20.7,"band":"Critical","days":149,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0167","csm":"Jordan Reyes","segment":"Mid-Market","arr":50200,"score":64.2,"band":"Neutral","days":39,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0168","csm":"Jordan Reyes","segment":"Mid-Market","arr":83000,"score":47.3,"band":"At Risk","days":174,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0169","csm":"Tom Alvarez","segment":"Enterprise","arr":111000,"score":89.5,"band":"Healthy","days":89,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0170","csm":"Jordan Reyes","segment":"Mid-Market","arr":39300,"score":47.2,"band":"At Risk","days":39,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0171","csm":"Melissa McGowan","segment":"Enterprise","arr":101000,"score":33.1,"band":"At Risk","days":189,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0172","csm":"Priya Nair","segment":"SMB","arr":7900,"score":27.9,"band":"Critical","days":270,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0173","csm":"Jordan Reyes","segment":"SMB","arr":34700,"score":3.8,"band":"Critical","days":122,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0174","csm":"Priya Nair","segment":"SMB","arr":16000,"score":65.2,"band":"Neutral","days":251,"expansion":1,"downgrade":1,"sponsor":1},{"id":"ACCT-0175","csm":"Tom Alvarez","segment":"SMB","arr":32300,"score":54.9,"band":"Neutral","days":353,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0176","csm":"Jordan Reyes","segment":"SMB","arr":18200,"score":40.0,"band":"At Risk","days":349,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0177","csm":"Melissa McGowan","segment":"Mid-Market","arr":49300,"score":66.6,"band":"Neutral","days":62,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0178","csm":"Melissa McGowan","segment":"Enterprise","arr":128200,"score":84.5,"band":"Healthy","days":356,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0179","csm":"Tom Alvarez","segment":"SMB","arr":14400,"score":23.2,"band":"Critical","days":84,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0180","csm":"Melissa McGowan","segment":"Mid-Market","arr":46400,"score":31.5,"band":"At Risk","days":23,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0181","csm":"Tom Alvarez","segment":"Mid-Market","arr":74800,"score":63.9,"band":"Neutral","days":299,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0182","csm":"Priya Nair","segment":"Mid-Market","arr":30700,"score":17.6,"band":"Critical","days":9,"expansion":0,"downgrade":1,"sponsor":0},{"id":"ACCT-0183","csm":"Tom Alvarez","segment":"Enterprise","arr":160600,"score":55.6,"band":"Neutral","days":149,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0184","csm":"Tom Alvarez","segment":"Mid-Market","arr":59800,"score":51.6,"band":"Neutral","days":171,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0185","csm":"Melissa McGowan","segment":"SMB","arr":11300,"score":66.0,"band":"Neutral","days":19,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0186","csm":"Melissa McGowan","segment":"Mid-Market","arr":42200,"score":33.4,"band":"At Risk","days":56,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0187","csm":"Tom Alvarez","segment":"SMB","arr":16700,"score":40.1,"band":"At Risk","days":324,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0188","csm":"Melissa McGowan","segment":"SMB","arr":16700,"score":62.9,"band":"Neutral","days":300,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0189","csm":"Priya Nair","segment":"Mid-Market","arr":45100,"score":14.3,"band":"Critical","days":328,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0190","csm":"Melissa McGowan","segment":"SMB","arr":12600,"score":32.6,"band":"At Risk","days":275,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0191","csm":"Melissa McGowan","segment":"SMB","arr":9600,"score":36.7,"band":"At Risk","days":111,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0192","csm":"Priya Nair","segment":"SMB","arr":16700,"score":43.5,"band":"At Risk","days":351,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0193","csm":"Melissa McGowan","segment":"Mid-Market","arr":44600,"score":40.2,"band":"At Risk","days":27,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0194","csm":"Priya Nair","segment":"Mid-Market","arr":21600,"score":55.0,"band":"Neutral","days":227,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0195","csm":"Tom Alvarez","segment":"SMB","arr":10800,"score":11.7,"band":"Critical","days":23,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0196","csm":"Jordan Reyes","segment":"Mid-Market","arr":64200,"score":33.1,"band":"At Risk","days":62,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0197","csm":"Melissa McGowan","segment":"SMB","arr":14500,"score":58.8,"band":"Neutral","days":162,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0198","csm":"Melissa McGowan","segment":"Enterprise","arr":94200,"score":3.5,"band":"Critical","days":124,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0199","csm":"Jordan Reyes","segment":"Mid-Market","arr":68000,"score":83.3,"band":"Healthy","days":280,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0200","csm":"Melissa McGowan","segment":"SMB","arr":17000,"score":36.2,"band":"At Risk","days":76,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0201","csm":"Priya Nair","segment":"Mid-Market","arr":63700,"score":52.1,"band":"Neutral","days":93,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0202","csm":"Priya Nair","segment":"Enterprise","arr":312700,"score":31.7,"band":"At Risk","days":95,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0203","csm":"Priya Nair","segment":"Mid-Market","arr":39700,"score":68.3,"band":"Neutral","days":301,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0204","csm":"Priya Nair","segment":"Mid-Market","arr":63300,"score":64.6,"band":"Neutral","days":21,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0205","csm":"Priya Nair","segment":"Mid-Market","arr":41100,"score":74.4,"band":"Neutral","days":167,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0206","csm":"Tom Alvarez","segment":"Enterprise","arr":237900,"score":25.1,"band":"Critical","days":272,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0207","csm":"Jordan Reyes","segment":"Enterprise","arr":259100,"score":82.2,"band":"Healthy","days":359,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0208","csm":"Tom Alvarez","segment":"SMB","arr":15900,"score":40.7,"band":"At Risk","days":52,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0209","csm":"Jordan Reyes","segment":"SMB","arr":18000,"score":62.3,"band":"Neutral","days":266,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0210","csm":"Melissa McGowan","segment":"SMB","arr":8300,"score":74.7,"band":"Neutral","days":183,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0211","csm":"Melissa McGowan","segment":"SMB","arr":16900,"score":41.1,"band":"At Risk","days":71,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0212","csm":"Priya Nair","segment":"SMB","arr":6800,"score":41.8,"band":"At Risk","days":134,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0213","csm":"Melissa McGowan","segment":"Mid-Market","arr":136500,"score":52.1,"band":"Neutral","days":31,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0214","csm":"Priya Nair","segment":"Enterprise","arr":256200,"score":59.2,"band":"Neutral","days":80,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0215","csm":"Tom Alvarez","segment":"SMB","arr":5700,"score":61.3,"band":"Neutral","days":204,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0216","csm":"Jordan Reyes","segment":"SMB","arr":3300,"score":33.3,"band":"At Risk","days":359,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0217","csm":"Melissa McGowan","segment":"Enterprise","arr":274100,"score":54.3,"band":"Neutral","days":135,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0218","csm":"Priya Nair","segment":"SMB","arr":8000,"score":49.0,"band":"At Risk","days":287,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0219","csm":"Jordan Reyes","segment":"SMB","arr":16000,"score":20.0,"band":"Critical","days":103,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0220","csm":"Tom Alvarez","segment":"Mid-Market","arr":23900,"score":42.2,"band":"At Risk","days":217,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0221","csm":"Melissa McGowan","segment":"Mid-Market","arr":47400,"score":55.8,"band":"Neutral","days":108,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0222","csm":"Melissa McGowan","segment":"Enterprise","arr":102900,"score":74.8,"band":"Neutral","days":144,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0223","csm":"Jordan Reyes","segment":"SMB","arr":16400,"score":32.5,"band":"At Risk","days":195,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0224","csm":"Jordan Reyes","segment":"Enterprise","arr":120000,"score":97.6,"band":"Healthy","days":262,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0225","csm":"Melissa McGowan","segment":"SMB","arr":25500,"score":35.0,"band":"At Risk","days":63,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0226","csm":"Jordan Reyes","segment":"SMB","arr":8300,"score":61.8,"band":"Neutral","days":279,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0227","csm":"Priya Nair","segment":"SMB","arr":23000,"score":20.7,"band":"Critical","days":110,"expansion":0,"downgrade":1,"sponsor":1},{"id":"ACCT-0228","csm":"Jordan Reyes","segment":"SMB","arr":12000,"score":43.2,"band":"At Risk","days":96,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0229","csm":"Melissa McGowan","segment":"Enterprise","arr":183300,"score":81.7,"band":"Healthy","days":300,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0230","csm":"Jordan Reyes","segment":"SMB","arr":5500,"score":33.9,"band":"At Risk","days":59,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0231","csm":"Jordan Reyes","segment":"SMB","arr":5000,"score":51.6,"band":"Neutral","days":131,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0232","csm":"Jordan Reyes","segment":"Enterprise","arr":238500,"score":35.0,"band":"At Risk","days":57,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0233","csm":"Melissa McGowan","segment":"Enterprise","arr":76300,"score":25.8,"band":"Critical","days":8,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0234","csm":"Melissa McGowan","segment":"SMB","arr":10200,"score":68.7,"band":"Neutral","days":44,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0235","csm":"Tom Alvarez","segment":"SMB","arr":10300,"score":52.7,"band":"Neutral","days":324,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0236","csm":"Tom Alvarez","segment":"Mid-Market","arr":28800,"score":80.4,"band":"Healthy","days":7,"expansion":1,"downgrade":0,"sponsor":0},{"id":"ACCT-0237","csm":"Tom Alvarez","segment":"Mid-Market","arr":50100,"score":78.0,"band":"Healthy","days":192,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0238","csm":"Priya Nair","segment":"SMB","arr":6000,"score":91.8,"band":"Healthy","days":21,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0239","csm":"Jordan Reyes","segment":"Mid-Market","arr":25000,"score":61.8,"band":"Neutral","days":270,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0240","csm":"Tom Alvarez","segment":"SMB","arr":19100,"score":51.8,"band":"Neutral","days":260,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0241","csm":"Jordan Reyes","segment":"Mid-Market","arr":30200,"score":78.2,"band":"Healthy","days":240,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0242","csm":"Priya Nair","segment":"SMB","arr":17500,"score":26.3,"band":"Critical","days":209,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0243","csm":"Priya Nair","segment":"SMB","arr":16800,"score":44.3,"band":"At Risk","days":156,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0244","csm":"Jordan Reyes","segment":"Mid-Market","arr":96300,"score":41.3,"band":"At Risk","days":320,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0245","csm":"Melissa McGowan","segment":"Enterprise","arr":176200,"score":55.1,"band":"Neutral","days":147,"expansion":1,"downgrade":1,"sponsor":0},{"id":"ACCT-0246","csm":"Jordan Reyes","segment":"SMB","arr":4800,"score":55.0,"band":"Neutral","days":228,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0247","csm":"Priya Nair","segment":"SMB","arr":8700,"score":36.3,"band":"At Risk","days":31,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0248","csm":"Melissa McGowan","segment":"SMB","arr":9800,"score":13.1,"band":"Critical","days":184,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0249","csm":"Jordan Reyes","segment":"Enterprise","arr":259200,"score":75.7,"band":"Healthy","days":173,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0250","csm":"Jordan Reyes","segment":"SMB","arr":14300,"score":67.6,"band":"Neutral","days":284,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0251","csm":"Jordan Reyes","segment":"SMB","arr":9400,"score":74.6,"band":"Neutral","days":276,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0252","csm":"Tom Alvarez","segment":"SMB","arr":14900,"score":38.5,"band":"At Risk","days":250,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0253","csm":"Jordan Reyes","segment":"Enterprise","arr":117200,"score":10.8,"band":"Critical","days":293,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0254","csm":"Melissa McGowan","segment":"SMB","arr":15800,"score":31.8,"band":"At Risk","days":124,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0255","csm":"Priya Nair","segment":"Mid-Market","arr":48600,"score":71.2,"band":"Neutral","days":170,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0256","csm":"Jordan Reyes","segment":"Mid-Market","arr":78300,"score":29.6,"band":"Critical","days":56,"expansion":0,"downgrade":0,"sponsor":0},{"id":"ACCT-0257","csm":"Priya Nair","segment":"Mid-Market","arr":53200,"score":49.2,"band":"At Risk","days":48,"expansion":0,"downgrade":0,"sponsor":1},{"id":"ACCT-0258","csm":"Jordan Reyes","segment":"SMB","arr":19700,"score":96.1,"band":"Healthy","days":189,"expansion":1,"downgrade":0,"sponsor":1},{"id":"ACCT-0259","csm":"Jordan Reyes","segment":"Enterprise","arr":139300,"score":44.3,"band":"At Risk","days":29,"expansion":1,"downgrade":0,"sponsor":1}],"weights":{"Healthy":0.02,"Neutral":0.1,"At Risk":0.35,"Critical":0.65},"uplift":1.15};
+const BANDS = ["Critical","At Risk","Neutral","Healthy"];
+const WINDOWS = ["Next 90 days","91-180 days","180+ days"];
+const BAND_COLOR = {"Critical":"var(--crit)","At Risk":"var(--risk)","Neutral":"var(--neu)","Healthy":"var(--ok)"};
+
+function windowOf(d){ return d <= 90 ? WINDOWS[0] : d <= 180 ? WINDOWS[1] : WINDOWS[2]; }
+D.rows.forEach(r => { r.win = windowOf(r.days); });
+
+function defaults(){
+  return { window:"Next 90 days", csm:"All", segment:"All", band:"All",
+           weights:Object.assign({}, D.weights), uplift:true, flagOnly:true,
+           sort:{key:"risk", dir:-1}, showAll:false };
+}
+let S = defaults();
+
+/* ---------- model ---------- */
+function riskOf(r){
+  let v = Math.round(r.arr * S.weights[r.band]);
+  if (S.uplift && r.downgrade === 1 && r.sponsor === 0) v *= D.uplift;
+  return v;
+}
+function sum(rs, k){ return rs.reduce((a, r) => a + r[k], 0); }
+function rowsFor(skip){
+  return D.rows.filter(r =>
+    (skip === "window"  || S.window  === "All" || r.win     === S.window)  &&
+    (skip === "csm"     || S.csm     === "All" || r.csm     === S.csm)     &&
+    (skip === "segment" || S.segment === "All" || r.segment === S.segment) &&
+    (skip === "band"    || S.band    === "All" || r.band    === S.band));
+}
+
+/* ---------- formatting ---------- */
+function fmt(n){
+  const a = Math.abs(n);
+  if (a >= 1e6) return "$" + (n/1e6).toFixed(2) + "M";
+  if (a >= 1e3) return "$" + Math.round(n/1e3) + "K";
+  return "$" + Math.round(n);
+}
+function full(n){ return "$" + Math.round(n).toLocaleString("en-US"); }
+function pct(a, b){ return b ? (a/b*100).toFixed(1) + "%" : "0.0%"; }
+function niceMax(v){
+  if (v <= 0) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p;
+  const n = m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10;
+  return n * p;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+function dim(key, val){ return S[key] !== "All" && S[key] !== val ? ' opacity=".35"' : ""; }
+
+/* ---------- charts ---------- */
+function chartWindow(){
+  const rows = rowsFor("window");
+  const gs = WINDOWS.map(w => {
+    const rs = rows.filter(r => r.win === w);
+    return { w, total:sum(rs,"arr"), risk:sum(rs,"risk"), n:rs.length };
+  });
+  const W = 520, H = 290, m = {l:54, r:12, t:22, b:44};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const max = niceMax(Math.max(...gs.map(g => g.total)));
+  const y = v => m.t + ih - (v / max) * ih;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Total ARR versus ARR at risk by renewal window">`;
+  for (let i = 0; i <= 4; i++){
+    const v = max * i / 4;
+    s += `<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}"/>`;
+    s += `<text x="${m.l-8}" y="${y(v)+4}" text-anchor="end">${fmt(v)}</text>`;
+  }
+  const gw = iw / gs.length, bw = Math.min(54, gw * 0.3);
+  gs.forEach((g, i) => {
+    const cx = m.l + gw * i + gw / 2, d = dim("window", g.w);
+    const tip = `${g.w}: ${g.n} accounts, ${full(g.total)} ARR, ${full(g.risk)} at risk (${pct(g.risk, g.total)})`;
+    s += `<g class="clickable" data-k="window" data-v="${esc(g.w)}"${d}><title>${esc(tip)}</title>`;
+    s += `<rect x="${cx-bw-2}" y="${y(g.total)}" width="${bw}" height="${y(0)-y(g.total)}" rx="3" fill="var(--total)"/>`;
+    s += `<rect x="${cx+2}" y="${y(g.risk)}" width="${bw}" height="${y(0)-y(g.risk)}" rx="3" fill="var(--crit)"/>`;
+    s += `<text class="val" x="${cx-bw/2-2}" y="${y(g.total)-5}" text-anchor="middle">${fmt(g.total)}</text>`;
+    s += `<text class="val" x="${cx+bw/2+2}" y="${y(g.risk)-5}" text-anchor="middle">${fmt(g.risk)}</text>`;
+    s += `<rect x="${cx-gw/2}" y="${m.t}" width="${gw}" height="${ih+m.b}" fill="transparent"/>`;
+    s += `</g>`;
+    s += `<text x="${cx}" y="${H-24}" text-anchor="middle">${g.w}</text>`;
+    s += `<text x="${cx}" y="${H-9}" text-anchor="middle" style="font-size:11px">${g.n} accts, ${pct(g.risk, g.total)} at risk</text>`;
+  });
+  s += `<line class="axis" x1="${m.l}" x2="${W-m.r}" y1="${y(0)}" y2="${y(0)}"/></svg>`;
+  return s;
+}
+
+function chartBand(){
+  const rows = rowsFor("band");
+  const counts = BANDS.map(b => ({ b, n: rows.filter(r => r.band === b).length,
+                                    arr: sum(rows.filter(r => r.band === b), "arr") }));
+  const W = 520, H = 270, m = {l:40, r:12, t:30, b:30};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const max = niceMax(Math.max(...counts.map(c => c.n), 1));
+  const y = v => m.t + ih - (v / max) * ih;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Renewing accounts by health band">`;
+  for (let i = 0; i <= 4; i++){
+    const v = max * i / 4;
+    s += `<line class="gl" x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}"/>`;
+    s += `<text x="${m.l-8}" y="${y(v)+4}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+  const gw = iw / counts.length, bw = Math.min(70, gw * 0.62);
+  counts.forEach((c, i) => {
+    const cx = m.l + gw * i + gw / 2;
+    const tip = `${c.b}: ${c.n} accounts, ${full(c.arr)} ARR`;
+    s += `<g class="clickable" data-k="band" data-v="${c.b}"${dim("band", c.b)}><title>${esc(tip)}</title>`;
+    s += `<rect x="${cx-bw/2}" y="${y(c.n)}" width="${bw}" height="${Math.max(0, y(0)-y(c.n))}" rx="3" fill="${BAND_COLOR[c.b]}"/>`;
+    s += `<text class="val" x="${cx}" y="${y(c.n)-6}" text-anchor="middle">${c.n}</text>`;
+    s += `<rect x="${cx-gw/2}" y="${m.t}" width="${gw}" height="${ih}" fill="transparent"/></g>`;
+    s += `<text x="${cx}" y="${H-10}" text-anchor="middle">${c.b}</text>`;
+  });
+  s += `<line class="axis" x1="${m.l}" x2="${W-m.r}" y1="${y(0)}" y2="${y(0)}"/></svg>`;
+  return s;
+}
+
+function hbars(items, key, color){
+  const W = 520, rowH = 52, m = {l:118, r:128, t:6, b:6};
+  const H = items.length * rowH + m.t + m.b;
+  const max = Math.max(...items.map(i => i.value), 1), iw = W - m.l - m.r;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  items.forEach((it, i) => {
+    const y0 = m.t + i * rowH, bh = 26, w = Math.max(2, it.value / max * iw);
+    s += `<g class="clickable" data-k="${key}" data-v="${esc(it.label)}"${dim(key, it.label)}><title>${esc(it.tip)}</title>`;
+    s += `<rect x="0" y="${y0}" width="${W}" height="${rowH-4}" fill="transparent"/>`;
+    s += `<text x="${m.l-10}" y="${y0+bh/2+4}" text-anchor="end" style="fill:var(--ink)">${esc(it.label)}</text>`;
+    s += `<rect x="${m.l}" y="${y0}" width="${w}" height="${bh}" rx="3" fill="${color}"/>`;
+    s += `<text class="val" x="${m.l+w+8}" y="${y0+bh/2+4}">${it.text}</text>`;
+    s += `<text x="${m.l+w+8}" y="${y0+bh/2+19}" style="font-size:11px">${it.sub}</text></g>`;
+  });
+  return s + "</svg>";
+}
+
+function chartCsm(){
+  const rows = rowsFor("csm");
+  const names = [...new Set(D.rows.map(r => r.csm))];
+  const items = names.map(n => {
+    const rs = rows.filter(r => r.csm === n), risk = sum(rs, "risk"), arr = sum(rs, "arr");
+    return { label:n, value:risk, text:fmt(risk), sub:pct(risk, arr) + " of their ARR",
+             tip:`${n}: ${rs.length} accounts, ${full(arr)} ARR, ${full(risk)} at risk` };
+  }).sort((a, b) => b.value - a.value);
+  return hbars(items, "csm", "var(--risk)");
+}
+function chartSeg(){
+  const rows = rowsFor("segment");
+  const segs = ["Enterprise","Mid-Market","SMB"], tot = sum(rows, "risk");
+  const items = segs.map(n => {
+    const rs = rows.filter(r => r.segment === n), risk = sum(rs, "risk");
+    return { label:n, value:risk, text:fmt(risk), sub:pct(risk, tot) + " of at-risk ARR",
+             tip:`${n}: ${rs.length} accounts, ${full(sum(rs,"arr"))} ARR, ${full(risk)} at risk` };
+  });
+  return hbars(items, "segment", "var(--accent)");
+}
+
+/* ---------- KPIs, insight, table ---------- */
+function renderKpis(rows){
+  const arr = sum(rows, "arr"), risk = sum(rows, "risk");
+  const flagged = rows.filter(r => r.band === "At Risk" || r.band === "Critical").length;
+  const scope = S.window === "All" ? "all renewals" : S.window.toLowerCase();
+  const k = (l, v, s, cls) => `<div class="card kpi ${cls||""}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+  document.getElementById("kpis").innerHTML =
+    k("ARR up for renewal", fmt(arr), `${rows.length} accounts, ${scope}`) +
+    k("ARR at risk", fmt(risk), "risk-weighted, not just renewing", "hot") +
+    k("% of ARR at risk", pct(risk, arr), "at risk divided by renewing") +
+    k("Accounts to watch", flagged, "At Risk or Critical band");
+}
+function renderInsight(){
+  const rows = rowsFor("csm");
+  const names = [...new Set(D.rows.map(r => r.csm))].map(n => {
+    const rs = rows.filter(r => r.csm === n);
+    return { n, risk:sum(rs, "risk"), arr:sum(rs, "arr") };
+  }).filter(x => x.arr > 0);
+  const el = document.getElementById("insight");
+  if (names.length < 2){ el.style.display = "none"; return; }
+  el.style.display = "";
+  const byPct = [...names].sort((a, b) => b.risk/b.arr - a.risk/a.arr)[0];
+  const byUsd = [...names].sort((a, b) => b.risk - a.risk)[0];
+  el.textContent = byPct.n === byUsd.n
+    ? `${byPct.n} carries both the most dollars at risk (${fmt(byPct.risk)}) and the highest concentration (${pct(byPct.risk, byPct.arr)} of their renewing ARR).`
+    : `${byUsd.n} carries the most dollars at risk (${fmt(byUsd.risk)}), but ${byPct.n} has the highest concentration at ${pct(byPct.risk, byPct.arr)} of their renewing ARR.`;
+}
+const COLS = [
+  {k:"id", t:"Account"}, {k:"csm", t:"CSM"}, {k:"segment", t:"Segment"},
+  {k:"arr", t:"ARR", num:1}, {k:"band", t:"Health"}, {k:"days", t:"Days to renewal", num:1},
+  {k:"risk", t:"ARR at risk", num:1}, {k:"flags", t:"Signals"}
+];
+function sortVal(r, k){
+  if (k === "band") return BANDS.indexOf(r.band);
+  if (k === "flags") return (r.downgrade ? 1 : 0) + (r.sponsor ? 0 : 1);
+  return r[k];
+}
+function renderTable(rows){
+  let rs = rows.slice();
+  if (S.flagOnly) rs = rs.filter(r => r.band === "At Risk" || r.band === "Critical");
+  const { key, dir } = S.sort;
+  rs.sort((a, b) => {
+    const x = sortVal(a, key), y = sortVal(b, key);
+    return (x < y ? -1 : x > y ? 1 : 0) * dir || b.risk - a.risk;
+  });
+  const total = rs.length, limit = 15;
+  const shown = S.showAll ? rs : rs.slice(0, limit);
+  document.getElementById("tbl-title").textContent =
+    (S.flagOnly ? "Accounts to flag" : "All accounts") + ` (${total})`;
+  const btn = document.getElementById("toggle-all");
+  btn.style.display = total > limit ? "" : "none";
+  btn.textContent = S.showAll ? `Show top ${limit}` : `Show all ${total}`;
+  if (!total){ document.getElementById("tbl").innerHTML = '<div class="empty">No accounts match the current filters.</div>'; return; }
+  let h = "<table><thead><tr>";
+  COLS.forEach(c => {
+    const arrow = S.sort.key === c.k ? (S.sort.dir > 0 ? " ▲" : " ▼") : "";
+    h += `<th class="${c.num ? "num" : ""}" data-sort="${c.k}">${c.t}<span class="ar">${arrow}</span></th>`;
+  });
+  h += "</tr></thead><tbody>";
+  shown.forEach(r => {
+    const tags = (r.downgrade ? '<span class="tag">Downgrade signal</span>' : "") +
+                 (r.sponsor ? "" : '<span class="tag">No exec sponsor</span>') +
+                 (r.expansion ? '<span class="tag">Expansion signal</span>' : "");
+    h += `<tr><td>${r.id}</td><td>${esc(r.csm)}</td><td>${r.segment}</td><td class="num">${full(r.arr)}</td>` +
+         `<td><span class="chip ${r.band}">${r.band}</span></td><td class="num">${r.days}</td>` +
+         `<td class="num"><b>${full(r.risk)}</b></td><td>${tags}</td></tr>`;
+  });
+  document.getElementById("tbl").innerHTML = h + "</tbody></table>";
+}
+
+/* ---------- controls ---------- */
+function fillSelect(id, options){
+  const el = document.getElementById(id);
+  el.innerHTML = options.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join("");
+}
+function syncControls(){
+  document.getElementById("f-window").value = S.window;
+  document.getElementById("f-csm").value = S.csm;
+  document.getElementById("f-segment").value = S.segment;
+  document.getElementById("f-band").value = S.band;
+  document.getElementById("c-uplift").checked = S.uplift;
+  document.getElementById("c-flag").checked = S.flagOnly;
+  BANDS.forEach(b => {
+    const v = Math.round(S.weights[b] * 100);
+    document.getElementById("w-" + b).value = v;
+    document.getElementById("wv-" + b).textContent = v + "%";
+  });
+}
+function init(){
+  fillSelect("f-window", ["All"].concat(WINDOWS));
+  fillSelect("f-csm", ["All"].concat([...new Set(D.rows.map(r => r.csm))].sort()));
+  fillSelect("f-segment", ["All","Enterprise","Mid-Market","SMB"]);
+  fillSelect("f-band", ["All"].concat(BANDS));
+  document.getElementById("sliders").innerHTML = BANDS.map(b =>
+    `<div class="sl"><div class="row"><span>${b}</span><b id="wv-${b}"></b></div>` +
+    `<input type="range" id="w-${b}" min="0" max="100" step="1" aria-label="${b} churn probability"></div>`).join("");
+  [["f-window","window"],["f-csm","csm"],["f-segment","segment"],["f-band","band"]].forEach(([id, k]) =>
+    document.getElementById(id).addEventListener("change", e => { S[k] = e.target.value; render(); }));
+  document.getElementById("c-uplift").addEventListener("change", e => { S.uplift = e.target.checked; render(); });
+  document.getElementById("c-flag").addEventListener("change", e => { S.flagOnly = e.target.checked; render(); });
+  BANDS.forEach(b => document.getElementById("w-" + b).addEventListener("input", e => {
+    S.weights[b] = e.target.value / 100; render();
+  }));
+  document.getElementById("reset").addEventListener("click", () => { S = defaults(); render(); });
+  document.getElementById("toggle-all").addEventListener("click", () => { S.showAll = !S.showAll; render(); });
+  document.addEventListener("click", e => {
+    const g = e.target.closest("[data-k]");
+    if (g){
+      const k = g.dataset.k, v = g.dataset.v;
+      S[k] = S[k] === v ? "All" : v; render(); return;
+    }
+    const th = e.target.closest("th[data-sort]");
+    if (th){
+      const k = th.dataset.sort;
+      S.sort = S.sort.key === k ? { key:k, dir:-S.sort.dir } : { key:k, dir:-1 };
+      render();
+    }
+  });
+  render();
+}
+function render(){
+  D.rows.forEach(r => { r.risk = riskOf(r); });
+  syncControls();
+  const rows = rowsFor(null);
+  renderKpis(rows);
+  renderInsight();
+  document.getElementById("ch-window").innerHTML = chartWindow();
+  document.getElementById("ch-csm").innerHTML = chartCsm();
+  document.getElementById("ch-band").innerHTML = chartBand();
+  document.getElementById("ch-seg").innerHTML = chartSeg();
+  renderTable(rows);
+}
+init();
+</script>
+</body>
+</html>

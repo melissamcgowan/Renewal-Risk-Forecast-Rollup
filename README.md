@@ -32,6 +32,15 @@ renewal window, CSM, segment, and individual flagged accounts.
    total vs. at-risk ARR by window, at-risk ARR by CSM, account
    distribution by health band, and at-risk ARR by segment.
 
+4. **`04_build_webapp.py`** + **`webapp_template.html`** -- Builds
+   `index.html`, an interactive, self-contained version of the dashboard
+   (no server, no external libraries). Filter by renewal window, CSM,
+   segment, and health band, click any bar to drill in, and move the
+   churn-probability sliders to see how the forecast changes under
+   different assumptions. Two-layer design: the Python script is the data
+   layer and the template is the presentation layer, so a live CRM export
+   can replace just `read_portfolio()`.
+
 ## Results
 
 On the sample book of business (260 accounts, $14.5M total ARR):
@@ -50,6 +59,7 @@ pip install pandas matplotlib numpy
 python3 01_generate_portfolio_data.py  # generates portfolio.csv
 python3 02_renewal_risk_rollup.py      # generates renewal_rollup.csv + console summary
 python3 03_visualize.py                # generates renewal_risk_dashboard.png
+python3 04_build_webapp.py             # generates index.html (open it in a browser)
 ```
 
 ## How this maps to a real CS org
